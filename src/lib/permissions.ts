@@ -39,7 +39,7 @@ const ALL: ModuleKey[] = [
 
 export const MODULE_ACCESS: Record<Role, ModuleKey[]> = {
   SUPER_ADMIN: ALL,
-  HOSPITAL_ADMIN: ALL.filter((m) => m !== "audit").concat("audit"),
+  HOSPITAL_ADMIN: ALL,
   RECEPTIONIST: ["dashboard", "patients", "reception", "appointments", "notifications"],
   BILLING_OFFICER: ["dashboard", "patients", "billing", "reports", "notifications"],
   DOCTOR: [
