@@ -97,3 +97,54 @@ export interface AuditLogEntry {
   description: string;
   createdAt?: Timestamp | null;
 }
+
+/* --------------------------------- patients -------------------------------- */
+
+export const GENDERS = ["MALE", "FEMALE", "OTHER"] as const;
+export type Gender = (typeof GENDERS)[number];
+
+export const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "UNKNOWN"] as const;
+export type BloodGroup = (typeof BLOOD_GROUPS)[number];
+
+export type PatientStatus = "ACTIVE" | "INACTIVE" | "DECEASED";
+
+export interface NextOfKin {
+  name: string;
+  relationship: string;
+  phone: string;
+}
+
+export interface PatientInsurance {
+  provider: string;
+  memberNumber: string;
+}
+
+export interface PatientInput {
+  firstName: string;
+  lastName: string;
+  otherNames?: string;
+  dateOfBirth: string;
+  gender: Gender;
+  phone?: string;
+  email?: string;
+  nationalId?: string;
+  address?: string;
+  county?: string;
+  bloodGroup: BloodGroup;
+  allergies?: string;
+  chronicConditions?: string;
+  nextOfKin: NextOfKin;
+  insurance: PatientInsurance;
+  notes?: string;
+}
+
+export interface Patient extends PatientInput {
+  id: string;
+  patientNumber: string;
+  search?: string;
+  status: PatientStatus;
+  registeredByUid: string;
+  registeredByName: string;
+  createdAt?: Timestamp | null;
+  updatedAt?: Timestamp | null;
+}

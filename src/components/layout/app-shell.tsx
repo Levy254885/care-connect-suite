@@ -57,7 +57,13 @@ const ADMIN_NAV: NavItem[] = [
   { label: "Settings", to: "/settings", module: "settings", icon: Settings, ready: true },
 ];
 
-function NavLinks({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => void }) {
+function NavLinks({
+  items,
+  onNavigate,
+}: {
+  items: NavItem[];
+  onNavigate?: (() => void) | undefined;
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <ul className="space-y-0.5">
