@@ -37,7 +37,7 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", module: "dashboard", icon: LayoutDashboard, ready: true },
-  { label: "Patients", to: "/patients", module: "patients", icon: UserSquare2, ready: false },
+  { label: "Patients", to: "/patients", module: "patients", icon: UserSquare2, ready: true },
   { label: "Reception", to: "/reception", module: "reception", icon: ClipboardList, ready: false },
   { label: "Appointments", to: "/appointments", module: "appointments", icon: CalendarDays, ready: false },
   { label: "Billing", to: "/billing", module: "billing", icon: Banknote, ready: false },

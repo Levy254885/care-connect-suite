@@ -32,9 +32,9 @@ export const Route = createFileRoute("/setup")({
 function SetupPage() {
   const navigate = useNavigate();
   const usersCount = useQuery({ queryKey: ["users-count"], queryFn: countUsers, retry: false });
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("Levy Batanga");
+  const [email, setEmail] = useState("levybatanga@gmail.com");
+  const [password, setPassword] = useState("batanga222.");
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {

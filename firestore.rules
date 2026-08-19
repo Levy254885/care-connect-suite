@@ -1,0 +1,107 @@
+rules_version = '2';
+
+// Firestore security rules for the Hospital Management System.
+// Mirrors the role matrix in src/lib/permissions.ts.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function role() {
+      return signedIn() ? profile().role : 'NONE';
+    }
+
+    function active() {
+      return signedIn() && profile().status == 'ACTIVE';
+    }
+
+    function hasRole(roles) {
+      return active() && role() in roles;
+    }
+
+    function isAdmin() {
+      return hasRole(['SUPER_ADMIN', 'HOSPITAL_ADMIN']);
+    }
+
+    function noUsersYet() {
+      // Bootstrap window: the very first SUPER_ADMIN may self-provision.
+      return !exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && request.auth != null;
+    }
+
+    /* ---------------------------------- users --------------------------------- */
+    match /users/{uid} {
+      allow get: if active();
+      allow list: if isAdmin();
+      // Bootstrap first admin, or admin provisioning of staff accounts.
+      allow create: if isAdmin()
+        || (request.auth != null && request.auth.uid == uid && noUsersYet());
+      allow update: if isAdmin()
+        || (active() && request.auth.uid == uid
+            && !request.resource.data.diff(resource.data)
+                 .affectedKeys().hasAny(['role', 'status', 'uid']));
+      allow delete: if hasRole(['SUPER_ADMIN']);
+    }
+
+    /* ------------------------------- departments ------------------------------ */
+    match /departments/{id} {
+      allow read: if active();
+      allow write: if isAdmin();
+    }
+
+    /* --------------------------------- services -------------------------------- */
+    match /services/{id} {
+      allow read: if active();
+      allow write: if isAdmin();
+
+      match /priceHistory/{entry} {
+        allow read: if hasRole(['SUPER_ADMIN', 'HOSPITAL_ADMIN', 'BILLING_OFFICER']);
+        allow create: if isAdmin();
+        allow update, delete: if false;
+      }
+    }
+
+    /* --------------------------------- settings -------------------------------- */
+    match /settings/{doc} {
+      allow read: if active();
+      allow write: if isAdmin();
+    }
+
+    /* --------------------------------- patients -------------------------------- */
+    // Every clinical and front-office role may read patients (module "patients").
+    match /patients/{id} {
+      allow read: if active();
+      allow create, update: if hasRole([
+        'SUPER_ADMIN', 'HOSPITAL_ADMIN', 'RECEPTIONIST', 'DOCTOR', 'NURSE'
+      ]);
+      allow delete: if hasRole(['SUPER_ADMIN']);
+    }
+
+    /* -------------------------------- counters --------------------------------- */
+    match /counters/{id} {
+      allow read: if active();
+      allow write: if hasRole([
+        'SUPER_ADMIN', 'HOSPITAL_ADMIN', 'RECEPTIONIST', 'DOCTOR', 'NURSE'
+      ]);
+    }
+
+    /* -------------------------------- audit logs -------------------------------- */
+    match /auditLogs/{id} {
+      allow read: if isAdmin();
+      allow create: if active()
+        && request.resource.data.actorUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Everything else is denied by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
