@@ -118,7 +118,6 @@ function PatientDetailPage() {
           <dl className="divide-y divide-border">
             <Row label="Provider" value={p.insurance?.provider} />
             <Row label="Member number" value={p.insurance?.memberNumber} />
-            <Row label="Scheme" value={p.insurance?.scheme} />
             <Row label="Registered by" value={p.registeredByName} />
           </dl>
         </Panel>
@@ -127,7 +126,7 @@ function PatientDetailPage() {
   );
 }
 
-function Row({ label, value }: { label: string; value?: string | null }) {
+function Row({ label, value }: { label: string; value?: string | null | undefined }) {
   return (
     <div className="flex items-start justify-between gap-4 px-5 py-3">
       <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>

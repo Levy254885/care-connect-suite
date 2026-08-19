@@ -45,7 +45,7 @@ const EMPTY: PatientInput = {
   allergies: "",
   chronicConditions: "",
   nextOfKin: { name: "", relationship: "", phone: "" },
-  insurance: { provider: "", memberNumber: "", scheme: "" },
+  insurance: { provider: "", memberNumber: "" },
   notes: "",
 };
 
@@ -174,14 +174,14 @@ function PatientsPage() {
             <Field label="Insurance provider" id="ins">
               <Input
                 id="ins"
-                value={form.insurance.provider ?? ""}
+                value={form.insurance.provider}
                 onChange={(e) => set("insurance", { ...form.insurance, provider: e.target.value })}
               />
             </Field>
             <Field label="Member number" id="insNo">
               <Input
                 id="insNo"
-                value={form.insurance.memberNumber ?? ""}
+                value={form.insurance.memberNumber}
                 onChange={(e) => set("insurance", { ...form.insurance, memberNumber: e.target.value })}
               />
             </Field>
