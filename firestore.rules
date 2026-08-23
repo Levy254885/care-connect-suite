@@ -67,6 +67,15 @@ service cloud.firestore {
       }
     }
 
+    /* ---------------------------- system bootstrap ----------------------------- */
+    // Public flag so the landing page can hide "First-time setup" once done.
+    match /system/{doc} {
+      allow read: if true;
+      // create only succeeds while the doc is absent, so this is the one-shot flag.
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin();
+    }
+
     /* --------------------------------- settings -------------------------------- */
     match /settings/{doc} {
       allow read: if active();

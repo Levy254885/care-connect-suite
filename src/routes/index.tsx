@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { isBootstrapped } from "@/lib/data/bootstrap";
 import { Activity, BedDouble, FlaskConical, ShieldCheck, Stethoscope, Users } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -66,12 +68,7 @@ function Index() {
           >
             Sign in to your workspace
           </Link>
-          <Link
-            to="/setup"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-surface px-5 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
-          >
-            First-time setup
-          </Link>
+          <SetupLink />
         </div>
 
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -88,5 +85,23 @@ function Index() {
         </div>
       </section>
     </main>
+  );
+}
+
+/** The first-time setup entry point disappears once a super administrator exists. */
+function SetupLink() {
+  const bootstrapped = useQuery({
+    queryKey: ["bootstrapped"],
+    queryFn: isBootstrapped,
+    retry: false,
+  });
+  if (!bootstrapped.isFetched || bootstrapped.data) return null;
+  return (
+    <Link
+      to="/setup"
+      className="inline-flex items-center justify-center rounded-md border border-input bg-surface px-5 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
+    >
+      First-time setup
+    </Link>
   );
 }

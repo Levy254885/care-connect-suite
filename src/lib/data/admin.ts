@@ -129,6 +129,7 @@ export async function createStaffUser(actor: Actor, input: NewUserInput): Promis
 
 /** Bootstraps the very first SUPER_ADMIN. Only allowed while users/ is empty. */
 export async function bootstrapFirstAdmin(uid: string, fullName: string, email: string) {
+  const { markBootstrapped } = await import("./bootstrap");
   await setDoc(doc(firestore(), "users", uid), {
     uid,
     fullName: fullName.trim(),
@@ -141,6 +142,7 @@ export async function bootstrapFirstAdmin(uid: string, fullName: string, email: 
     createdAt: serverTimestamp(),
     lastActivityAt: serverTimestamp(),
   });
+  await markBootstrapped(uid, email.trim());
 }
 
 export async function updateStaffUser(
