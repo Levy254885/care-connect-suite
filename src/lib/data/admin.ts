@@ -142,6 +142,7 @@ export async function bootstrapFirstAdmin(uid: string, fullName: string, email: 
     createdAt: serverTimestamp(),
     lastActivityAt: serverTimestamp(),
   });
+  await markBootstrapped(uid, email.trim());
 }
 
 export async function updateStaffUser(
